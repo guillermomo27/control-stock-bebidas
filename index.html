@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Stock de Bebidas</title>
+    <link rel="stylesheet" href="styles.css"> 
+    
+
+</head>
+<body>
+
+    <h1>Control de Stock de Bebidas</h1>
+
+    <!-- Formulario para ingresar detalles del PDF -->
+    <div class="form-container">
+        <label for="sector">Sector de Solicitud:</label>
+        <input type="text" id="sector" placeholder="Ingrese el sector">
+        <br><br>
+        <label for="responsable">Responsable:</label>
+        <input type="text" id="responsable" placeholder="Nombre del responsable">
+        <br><br>
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha">
+    </div>
+    
+    <!-- Botones para mostrar bebidas con o sin alcohol -->
+    <button onclick="mostrarBebidas('conAlcohol')">Mostrar Bebidas con Alcohol</button>
+    <button onclick="mostrarBebidas('sinAlcohol')">Mostrar Bebidas sin Alcohol</button>
+    
+    <!-- Tabla de control de stock -->
+    <table>
+        <thead>
+            <tr>
+                <th>Bebida</th>
+                <th>Stock Inicial</th>
+                <th>Pedido</th>
+                <th>Consumo</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="stockTable">
+            <!-- Bebidas con Alcohol -->
+            <tr class="bebida-alcohol">
+                <td>Enemigo Chardonnay</td>
+                <td><input type="number" id="stock1" value="0"></td>
+                <td><input type="number" id="pedido1" value="0"></td>
+                <td><input type="number" id="consumo1" value="0"></td>
+                <td class="total" id="total1">0</td>
+            </tr>
+            <tr class="bebida-alcohol">
+                <td>Enemigo Semillon</td>
+                <td><input type="number" id="stock2" value="0"></td>
+                <td><input type="number" id="pedido2" value="0"></td>
+                <td><input type="number" id="consumo2" value="0"></td>
+                <td class="total" id="total2">0</td>
+            </tr>
+            <!-- Bebidas sin Alcohol -->
+            <tr class="bebida-sin-alcohol">
+                <td>Pepsi</td>
+                <td><input type="number" id="stock3" value="0"></td>
+                <td><input type="number" id="pedido3" value="0"></td>
+                <td><input type="number" id="consumo3" value="0"></td>
+                <td class="total" id="total3">0</td>
+            </tr>
+            <tr class="bebida-sin-alcohol">
+                <td>Pepsi Light</td>
+                <td><input type="number" id="stock4" value="0"></td>
+                <td><input type="number" id="pedido4" value="0"></td>
+                <td><input type="number" id="consumo4" value="0"></td>
+                <td class="total" id="total4">0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Botones para calcular totales y exportar PDF -->
+    <button onclick="calcularTotal()">Calcular Totales</button>
+    <button onclick="exportarPDF()">Exportar a PDF</button>
+
+    <!-- Enlace a jsPDF y el archivo JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="app.js"></script> <!-- Aquí enlazamos el archivo JS -->
+
+</body>
+<script src="app.js"></script>
+</html>
