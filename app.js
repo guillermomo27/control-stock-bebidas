@@ -11,9 +11,6 @@ function mostrarBebidas(tipo) {
     }
 }
 
-
-
-
 function calcularTotal() {
     const filas = document.querySelectorAll('#stockTable tr');
 
@@ -29,8 +26,6 @@ function calcularTotal() {
         fila.querySelector('.total').innerText = total;
     });
 }
-
-
 
 function exportarPDF() {
     const { jsPDF } = window.jspdf;
@@ -110,9 +105,6 @@ function exportarPDF() {
     doc.save('Solicitud_Bebidas.pdf');
 }
 
-
-
-
 function agregarItem() {
     const tabla = document.getElementById('stockTable');
     const rowCount = tabla.rows.length + 1;
@@ -136,3 +128,128 @@ function agregarItem() {
     document.getElementById(`consumo${rowCount}`).addEventListener('input', calcularTotal);
 }
 
+
+function solicitarPedido() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Obtener los detalles ingresados
+    const sector = document.getElementById('sector').value || 'No especificado';
+    const responsable = document.getElementById('responsable').value || 'No especificado';
+    const fecha = document.getElementById('fecha').value || 'No especificada';
+
+    // Añadir título principal
+    doc.setFontSize(18);
+    doc.text('Solicitud de Pedido', 105, 15, null, null, 'center');
+
+    // Añadir detalles generales
+    doc.setFontSize(12);
+    doc.text(`Sector: ${sector}`, 20, 30); 
+    doc.text(`Responsable: ${responsable}`, 20, 40); 
+    doc.text(`Fecha: ${fecha}`, 20, 50);
+
+    let yPosition = 70; 
+
+    // Dibujar encabezado de la tabla (stock inicial y pedido)
+    doc.setFontSize(10);
+    doc.text('Bebida', 20, yPosition);
+    doc.text('Stock Inicial', 80, yPosition); 
+    doc.text('Pedido', 120, yPosition);
+
+    yPosition += 6;
+    doc.line(20, yPosition, 190, yPosition); 
+    yPosition += 6;
+
+    // Obtener solo las filas de stock inicial y pedido
+    const filas = document.querySelectorAll('#stockTable tr');
+    filas.forEach(fila => {
+        const bebida = fila.querySelector('td:nth-child(1)').innerText;
+        const stock = fila.querySelector('input[type="number"][id^="stock"]').value || 0;
+        const pedido = fila.querySelector('input[type="number"][id^="pedido"]').value || 0;
+
+        if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+        }
+
+        doc.text(bebida, 20, yPosition); 
+        doc.text(stock.toString(), 80, yPosition); 
+        doc.text(pedido.toString(), 120, yPosition); 
+
+        yPosition += 8;
+    });
+
+    // Guardar el PDF y enviar a WhatsApp
+    doc.save('Solicitud_Pedido.pdf');
+    enviarWhatsApp('Solicitud_Pedido.pdf');
+}
+
+function enviarResumenCierre() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Obtener los detalles ingresados
+    const sector = document.getElementById('sector').value || 'No especificado';
+    const responsable = document.getElementById('responsable').value || 'No especificado';
+    const fecha = document.getElementById('fecha').value || 'No especificada';
+
+    // Añadir título principal
+    doc.setFontSize(18);
+    doc.text('Resumen de Cierre', 105, 15, null, null, 'center');
+
+    // Añadir detalles generales
+    doc.setFontSize(12);
+    doc.text(`Sector: ${sector}`, 20, 30); 
+    doc.text(`Responsable: ${responsable}`, 20, 40); 
+    doc.text(`Fecha: ${fecha}`, 20, 50);
+
+    let yPosition = 70; 
+
+    // Dibujar la tabla completa
+    doc.setFontSize(10);
+    doc.text('Bebida', 20, yPosition);
+    doc.text('Stock', 80, yPosition); 
+    doc.text('Pedido', 100, yPosition); 
+    doc.text('Consumo', 120, yPosition); 
+    doc.text('Total', 145, yPosition);
+
+    yPosition += 6;
+    doc.line(20, yPosition, 190, yPosition); 
+    yPosition += 6;
+
+    // Obtener todas las filas de la tabla
+    const filas = document.querySelectorAll('#stockTable tr');
+    filas.forEach(fila => {
+        const bebida = fila.querySelector('td:nth-child(1)').innerText;
+        const stock = fila.querySelector('input[type="number"][id^="stock"]').value || 0;
+        const pedido = fila.querySelector('input[type="number"][id^="pedido"]').value || 0;
+        const consumo = fila.querySelector('input[type="number"][id^="consumo"]').value || 0;
+        const total = fila.querySelector('.total').innerText;
+
+        if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+        }
+
+        doc.text(bebida, 20, yPosition); 
+        doc.text(stock.toString(), 80, yPosition); 
+        doc.text(pedido.toString(), 100, yPosition); 
+        doc.text(consumo.toString(), 120, yPosition); 
+        doc.text(total.toString(), 145, yPosition);
+
+        yPosition += 8;
+    });
+
+    // Guardar el PDF y enviar a WhatsApp
+    doc.save('Resumen_Cierre.pdf');
+    enviarWhatsApp('Resumen_Cierre.pdf');
+}
+
+function enviarWhatsApp(archivo) {
+    const mensaje = `Pedido o Resumen adjunto: ${archivo}`;
+    const numeroGrupo = "Lt9ZUSeDMdb4anDe4bq8vg"; // Reemplaza con el número del grupo de WhatsApp
+
+    // Abrir WhatsApp Web con un mensaje predefinido
+    const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroGrupo}&text=${encodeURIComponent(mensaje)}`;
+    window.open(urlWhatsApp);
+}
