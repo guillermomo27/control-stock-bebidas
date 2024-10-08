@@ -11,17 +11,26 @@ function mostrarBebidas(tipo) {
     }
 }
 
+
+
+
 function calcularTotal() {
-    // Calcular los totales para todas las bebidas
     const filas = document.querySelectorAll('#stockTable tr');
-    filas.forEach((fila, index) => {
-        const stock = parseFloat(fila.querySelector(`#stock${index + 1}`).value) || 0;
-        const pedido = parseFloat(fila.querySelector(`#pedido${index + 1}`).value) || 0;
-        const consumo = parseFloat(fila.querySelector(`#consumo${index + 1}`).value) || 0;
+
+    filas.forEach(fila => {
+        const stock = parseFloat(fila.querySelector('input[id^="stock"]').value) || 0;
+        const pedido = parseFloat(fila.querySelector('input[id^="pedido"]').value) || 0;
+        const consumo = parseFloat(fila.querySelector('input[id^="consumo"]').value) || 0;
+
+        // Cálculo del total (puedes ajustar la fórmula si es necesario)
         const total = stock + pedido - consumo;
-        fila.querySelector(`#total${index + 1}`).innerText = total;
+
+        // Actualizar el campo del total
+        fila.querySelector('.total').innerText = total;
     });
 }
+
+
 
 function exportarPDF() {
     const { jsPDF } = window.jspdf;
@@ -36,60 +45,94 @@ function exportarPDF() {
     doc.setFontSize(18);
     doc.text('Solicitud de Bebidas', 105, 15, null, null, 'center');
 
-    // Añadir detalles generales
+    // Añadir detalles generales con separación
     doc.setFontSize(12);
-    doc.text(`Sector de Solicitud: ${sector}`, 10, 30);
-    doc.text(`Responsable: ${responsable}`, 10, 40);
-    doc.text(`Fecha: ${fecha}`, 10, 50);
+    doc.text(`Sector de Solicitud: ${sector}`, 20, 30); 
+    doc.text(`Responsable: ${responsable}`, 20, 40); 
+    doc.text(`Fecha: ${fecha}`, 20, 50);
 
-    // Función para dibujar una tabla para bebidas
-    function dibujarTablaBebidas(filas, titulo, yInicial) {
-        // Añadir título para la sección (Bebidas con o sin alcohol)
-        doc.setFontSize(14);
-        doc.text(titulo, 10, yInicial);
+    let yPosition = 70; // Posición vertical inicial para la tabla
 
-        // Dibujar encabezados de la tabla
-        yInicial += 10;
-        doc.setFontSize(12);
-        doc.text('Bebida', 10, yInicial);
-        doc.text('Stock', 60, yInicial);
-        doc.text('Pedido', 85, yInicial);
-        doc.text('Consumo', 115, yInicial);
-        doc.text('Total', 145, yInicial);
-        
-        yInicial += 5;
-        doc.line(10, yInicial, 200, yInicial); // Línea de separación
+    // Dibujar una línea de separación más destacada entre el encabezado y la tabla
+    doc.setLineWidth(1.5);
+    doc.line(10, yPosition - 5, 200, yPosition - 5); 
 
-        // Iterar sobre las filas y agregar cada bebida a la tabla
+    // Función para dibujar la tabla en el PDF, incluyendo los nuevos ítems
+    function dibujarTablaBebidas(filas) {
+        if (filas.length === 0) return;
+    
+        doc.setFontSize(10);
+        doc.text('Bebida', 20, yPosition);
+        doc.text('Stock', 80, yPosition); 
+        doc.text('Pedido', 105, yPosition); 
+        doc.text('Consumo', 125, yPosition); 
+        doc.text('Total', 145, yPosition); 
+    
+        yPosition += 6;
+        doc.setLineWidth(0.5);
+        doc.line(20, yPosition, 190, yPosition); 
+        yPosition += 6;
+    
         filas.forEach(fila => {
-            const bebida = fila.cells[0].innerText;
-            const stock = fila.cells[1].querySelector('input').value;
-            const pedido = fila.cells[2].querySelector('input').value;
-            const consumo = fila.cells[3].querySelector('input').value;
-            const total = fila.cells[4].innerText;
-
-            // Solo incluir si se ha ingresado algún dato
-            if (stock > 0 || pedido > 0 || consumo > 0) {
-                yInicial += 10;
-                doc.text(bebida, 10, yInicial);
-                doc.text(stock, 60, yInicial);
-                doc.text(pedido, 85, yInicial);
-                doc.text(consumo, 115, yInicial);
-                doc.text(total, 145, yInicial);
+            // Verificar si existe el input para el nombre de la bebida
+            const bebidaInputElement = fila.querySelector('td:nth-child(1) input');
+            const bebidaInput = bebidaInputElement ? bebidaInputElement.value : fila.querySelector('td:nth-child(1)').innerText;
+    
+            const stockInput = fila.querySelector('input[type="number"][id^="stock"]')?.value || 0;
+            const pedidoInput = fila.querySelector('input[type="number"][id^="pedido"]')?.value || 0;
+            const consumoInput = fila.querySelector('input[type="number"][id^="consumo"]')?.value || 0;
+            const totalCell = fila.querySelector('.total')?.innerText || 0;
+    
+            // Si alguno de los campos no existe, saltamos esta fila
+            if (!bebidaInput) return;
+    
+            if (yPosition > 280) {
+                doc.addPage();
+                yPosition = 20;
             }
+    
+            doc.text(bebidaInput, 20, yPosition); 
+            doc.text(stockInput.toString(), 80, yPosition); 
+            doc.text(pedidoInput.toString(), 105, yPosition); 
+            doc.text(consumoInput.toString(), 125, yPosition); 
+            doc.text(totalCell.toString(), 145, yPosition); 
+    
+            yPosition += 8;
         });
     }
+    
 
-    // Bebidas con Alcohol
-    let y = 60;
-    const filasAlcohol = document.querySelectorAll('.bebida-alcohol');
-    dibujarTablaBebidas(filasAlcohol, 'Bebidas con Alcohol', y);
-
-    // Bebidas sin Alcohol
-    y += (filasAlcohol.length * 10) + 30; // Ajustar la posición para la siguiente tabla
-    const filasSinAlcohol = document.querySelectorAll('.bebida-sin-alcohol');
-    dibujarTablaBebidas(filasSinAlcohol, 'Bebidas sin Alcohol', y);
+    // Obtener todas las filas de la tabla, incluidas las filas agregadas dinámicamente
+    const filas = document.querySelectorAll('#stockTable tr'); 
+    dibujarTablaBebidas(filas);
 
     // Guardar el PDF
     doc.save('Solicitud_Bebidas.pdf');
 }
+
+
+
+
+function agregarItem() {
+    const tabla = document.getElementById('stockTable');
+    const rowCount = tabla.rows.length + 1;
+
+    // Crear una nueva fila
+    const nuevaFila = document.createElement('tr');
+    nuevaFila.innerHTML = `
+        <td><input type="text" id="bebida${rowCount}" placeholder="Nueva bebida"></td>
+        <td><input type="number" id="stock${rowCount}" value="0"></td>
+        <td><input type="number" id="pedido${rowCount}" value="0"></td>
+        <td><input type="number" id="consumo${rowCount}" value="0"></td>
+        <td class="total" id="total${rowCount}">0</td>
+    `;
+
+    // Añadir la nueva fila a la tabla
+    tabla.appendChild(nuevaFila);
+
+    // Añadir event listeners para actualizar cálculos
+    document.getElementById(`stock${rowCount}`).addEventListener('input', calcularTotal);
+    document.getElementById(`pedido${rowCount}`).addEventListener('input', calcularTotal);
+    document.getElementById(`consumo${rowCount}`).addEventListener('input', calcularTotal);
+}
+
