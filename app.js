@@ -247,7 +247,7 @@ function enviarResumenCierre() {
 
 function enviarWhatsApp(archivo) {
     const mensaje = `Pedido o Resumen adjunto: ${archivo}`;
-    const numeroGrupo = "Lt9ZUSeDMdb4anDe4bq8vg"; // Reemplaza con el número del grupo de WhatsApp
+    const numeroGrupo = "https://chat.whatsapp.com/Lt9ZUSeDMdb4anDe4bq8vg"; // Reemplaza con el número del grupo de WhatsApp
 
     // Abrir WhatsApp Web con un mensaje predefinido
     const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroGrupo}&text=${encodeURIComponent(mensaje)}`;
