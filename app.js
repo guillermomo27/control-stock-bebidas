@@ -275,3 +275,76 @@ function enviarWhatsApp() {
         window.open(urlWhatsAppWeb);
     }
 }
+
+
+function guardarDatos() {
+    const filas = document.querySelectorAll('#stockTable tr');
+    const datos = [];
+
+    filas.forEach(fila => {
+        const bebida = fila.querySelector('td:nth-child(1) input')?.value || fila.querySelector('td:nth-child(1)').innerText;
+        const stock = fila.querySelector('input[id^="stock"]').value;
+        const pedido = fila.querySelector('input[id^="pedido"]').value;
+        const consumo = fila.querySelector('input[id^="consumo"]').value;
+        const total = fila.querySelector('.total').innerText;
+
+        datos.push({
+            bebida,
+            stock,
+            pedido,
+            consumo,
+            total
+        });
+    });
+
+    localStorage.setItem('stockData', JSON.stringify(datos)); // Guardar en localStorage
+    console.log('Datos guardados en localStorage');
+}
+
+// Llamar a esta función cada vez que cambie un valor
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', guardarDatos);
+});
+
+function restaurarDatos() {
+    const datos = JSON.parse(localStorage.getItem('stockData'));
+
+    if (datos) {
+        const filas = document.querySelectorAll('#stockTable tr');
+
+        filas.forEach((fila, index) => {
+            const bebida = fila.querySelector('td:nth-child(1) input') || fila.querySelector('td:nth-child(1)').innerText;
+            if (bebida && datos[index]) {
+                fila.querySelector('input[id^="stock"]').value = datos[index].stock;
+                fila.querySelector('input[id^="pedido"]').value = datos[index].pedido;
+                fila.querySelector('input[id^="consumo"]').value = datos[index].consumo;
+                fila.querySelector('.total').innerText = datos[index].total;
+            }
+        });
+
+        console.log('Datos restaurados desde localStorage');
+    }
+}
+
+// Llamar a esta función cuando se cargue la página
+window.addEventListener('load', restaurarDatos);
+
+function borrarTodo() {
+    // Borrar los valores visibles
+    const filas = document.querySelectorAll('#stockTable tr');
+
+    filas.forEach(fila => {
+        fila.querySelector('input[id^="stock"]').value = 0;
+        fila.querySelector('input[id^="pedido"]').value = 0;
+        fila.querySelector('input[id^="consumo"]').value = 0;
+        fila.querySelector('.total').innerText = 0;
+    });
+
+    // Borrar el localStorage
+    localStorage.removeItem('stockData');
+    console.log('Datos borrados del localStorage y de la interfaz');
+}
+
+// Añadir el evento al botón de borrar todo
+document.querySelector('button[onclick="borrarCarga()"]').addEventListener('click', borrarTodo);
+
