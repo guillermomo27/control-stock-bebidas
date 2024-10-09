@@ -245,11 +245,26 @@ function enviarResumenCierre() {
     enviarWhatsApp('Resumen_Cierre.pdf');
 }
 
-function enviarWhatsApp(archivo) {
-    const mensaje = `Pedido o Resumen adjunto: ${archivo}`;
-    const numeroGrupo = "https://chat.whatsapp.com/Lt9ZUSeDMdb4anDe4bq8vg"; // Reemplaza con el número del grupo de WhatsApp
+function enviarWhatsApp() {
+    const archivoPDF = 'TuArchivo.pdf';  // Puedes pasar el archivo que generaste previamente
 
-    // Abrir WhatsApp Web con un mensaje predefinido
-    const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroGrupo}&text=${encodeURIComponent(mensaje)}`;
-    window.open(urlWhatsApp);
+    // Comprobar si está disponible la aplicación de WhatsApp para Windows
+    const isWindows = navigator.userAgent.includes('Win');
+    const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+
+    if (isWindows) {
+        // Intenta abrir la aplicación de WhatsApp en Windows
+        const urlWhatsAppWindows = `whatsapp://send?text=${encodeURIComponent('Solicitud de pedido adjunta: ' + archivoPDF)}`;
+        window.open(urlWhatsAppWindows);
+
+    } else if (isMobile) {
+        // Si está en un teléfono móvil (Android o iPhone)
+        const urlWhatsAppMobile = `whatsapp://send?text=${encodeURIComponent('Solicitud de pedido adjunta: ' + archivoPDF)}`;
+        window.open(urlWhatsAppMobile);
+
+    } else {
+        // Si no es Windows ni móvil, abre WhatsApp Web
+        const urlWhatsAppWeb = `https://web.whatsapp.com/`;
+        window.open(urlWhatsAppWeb);
+    }
 }
