@@ -1,3 +1,4 @@
+/* Estilo general */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -10,6 +11,7 @@ h1 {
     color: #333;
 }
 
+/* Estilos de tabla */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -39,25 +41,60 @@ input[type="text"], input[type="date"] {
     font-weight: bold;
 }
 
+/* Contenedor de botones */
+.botones-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* Estilos para los botones */
 button {
-    display: block;
-    margin: 20px auto;
+    display: inline-block;
     padding: 10px 20px;
-    background-color: #333;
-    color: white;
+    margin: 10px;
     border: none;
     cursor: pointer;
+    color: rgb(14, 2, 2);
+    flex: 1 1 45%; /* Asegura que dos botones se alineen en una fila */
+}
+
+/* Colores intercalados */
+button:nth-child(odd) {
+    background-color: #838683; /* Verde */
+}
+
+button:nth-child(even) {
+    background-color: #c7c2c0; /* Naranja */
 }
 
 button:hover {
-    background-color: #555;
+    opacity: 0.8;
 }
 
-.bebida-alcohol, .bebida-sin-alcohol {
-    display: table-row;
+/* Ajustes para pantallas grandes (3 botones a la izquierda y 3 a la derecha) */
+@media (min-width: 768px) {
+    .botones-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    button {
+        width: 90%;
+        margin: 10px auto;
+    }
 }
 
-.form-container {
-    margin-bottom: 20px;
-}
+/* Estilos para pantallas pequeñas (en columna) */
+@media (max-width: 767px) {
+    .botones-container {
+        flex-direction: column;
+    }
 
+    button {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
