@@ -246,7 +246,7 @@ function enviarResumenCierre() {
 }
 
 function enviarWhatsApp() {
-    const archivoPDF = 'TuArchivo.pdf';  // Puedes pasar el archivo que generaste previamente
+    
 
     // Comprobar si está disponible la aplicación de WhatsApp para Windows
     const isWindows = navigator.userAgent.includes('Win');
@@ -254,12 +254,12 @@ function enviarWhatsApp() {
 
     if (isWindows) {
         // Intenta abrir la aplicación de WhatsApp en Windows
-        const urlWhatsAppWindows = `whatsapp://send?text=${encodeURIComponent('Solicitud de pedido adjunta: ' + archivoPDF)}`;
+        const urlWhatsAppWindows = `whatsapp://send?text=${encodeURIComponent('Barra: ')}`;
         window.open(urlWhatsAppWindows);
 
     } else if (isMobile) {
         // Si está en un teléfono móvil (Android o iPhone)
-        const urlWhatsAppMobile = `whatsapp://send?text=${encodeURIComponent('Solicitud de pedido adjunta: ' + archivoPDF)}`;
+        const urlWhatsAppMobile = `whatsapp://send?text=${encodeURIComponent('Barra: ')}`;
         window.open(urlWhatsAppMobile);
 
     } else {
