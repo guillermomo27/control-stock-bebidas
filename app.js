@@ -163,7 +163,9 @@ function solicitarPedido() {
     // Obtener solo las filas de stock inicial y pedido
     const filas = document.querySelectorAll('#stockTable tr');
     filas.forEach(fila => {
-        const bebida = fila.querySelector('td:nth-child(1)').innerText;
+        // Verificar si es una fila que contiene un input de texto (nueva bebida) o una bebida predefinida
+        const bebidaInputElement = fila.querySelector('input[type="text"]');
+        const bebida = bebidaInputElement ? bebidaInputElement.value : fila.querySelector('td:nth-child(1)').innerText;
         const stock = fila.querySelector('input[type="number"][id^="stock"]').value || 0;
         const pedido = fila.querySelector('input[type="number"][id^="pedido"]').value || 0;
 
@@ -172,6 +174,7 @@ function solicitarPedido() {
             yPosition = 20;
         }
 
+        // Escribir los valores en el PDF
         doc.text(bebida, 20, yPosition); 
         doc.text(stock.toString(), 80, yPosition); 
         doc.text(pedido.toString(), 120, yPosition); 
@@ -220,7 +223,9 @@ function enviarResumenCierre() {
     // Obtener todas las filas de la tabla
     const filas = document.querySelectorAll('#stockTable tr');
     filas.forEach(fila => {
-        const bebida = fila.querySelector('td:nth-child(1)').innerText;
+        // Verificar si es una fila que contiene un input de texto (nueva bebida) o una bebida predefinida
+        const bebidaInputElement = fila.querySelector('input[type="text"]');
+        const bebida = bebidaInputElement ? bebidaInputElement.value : fila.querySelector('td:nth-child(1)').innerText;
         const stock = fila.querySelector('input[type="number"][id^="stock"]').value || 0;
         const pedido = fila.querySelector('input[type="number"][id^="pedido"]').value || 0;
         const consumo = fila.querySelector('input[type="number"][id^="consumo"]').value || 0;
@@ -231,6 +236,7 @@ function enviarResumenCierre() {
             yPosition = 20;
         }
 
+        // Escribir los valores en el PDF
         doc.text(bebida, 20, yPosition); 
         doc.text(stock.toString(), 80, yPosition); 
         doc.text(pedido.toString(), 100, yPosition); 
@@ -245,8 +251,9 @@ function enviarResumenCierre() {
     enviarWhatsApp('Resumen_Cierre.pdf');
 }
 
+
 function enviarWhatsApp() {
-    
+    //const archivoPDF = 'TuArchivo.pdf';  // Puedes pasar el archivo que generaste previamente
 
     // Comprobar si está disponible la aplicación de WhatsApp para Windows
     const isWindows = navigator.userAgent.includes('Win');
